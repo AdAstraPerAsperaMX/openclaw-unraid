@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>OpenClaw</Name>
+  <Repository>ghcr.io/openclaw/openclaw:latest</Repository>
+  <Registry>https://github.com/openclaw/openclaw</Registry>
+  <Branch>
+    <Tag>latest</Tag>
+    <TagDescription>Latest stable release</TagDescription>
+  </Branch>
+  <Network>host</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/openclaw/openclaw/discussions</Support>
+  <Project>https://github.com/openclaw/openclaw</Project>
+  <Overview>OpenClaw is an AI-powered personal assistant that runs locally and connects to Discord, Telegram, Slack, and more. It can manage your files, run commands, browse the web, control your smart home, and automate tasks - all while keeping your data private.&#xD;
+&#xD;
+Features:&#xD;
+- Multi-channel support (Discord, Telegram, Slack, WhatsApp, Signal, iMessage)&#xD;
+- Local file access and command execution&#xD;
+- Web browsing and research&#xD;
+- Cron jobs and automation&#xD;
+- Memory and context persistence&#xD;
+- Extensible skills system&#xD;
+- Web UI for management&#xD;
+&#xD;
+FIRST TIME SETUP:&#xD;
+1. After starting, fix permissions: chown -R 1000:1000 /mnt/user/appdata/openclaw&#xD;
+2. Access Web UI at: http://YOUR-IP:18789?token=YOUR_GATEWAY_TOKEN&#xD;
+&#xD;
+Documentation: https://docs.openclaw.dev</Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:18789?token=[OPENCLAW_GATEWAY_TOKEN]</WebUI>
+  <Icon>https://raw.githubusercontent.com/openclaw/openclaw/main/docs/static/img/logo.png</Icon>
+  <PostArgs>gateway</PostArgs>
+  <ExtraParams>--restart unless-stopped</ExtraParams>
+  <Description>OpenClaw - AI-powered personal assistant. Connect to Discord, Telegram, Slack and more. Container runs as non-root (UID 1000).</Description>
+  <Networking>
+    <Mode>host</Mode>
+    <Publish/>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/openclaw/config</HostDir>
+      <ContainerDir>/home/node/.openclaw</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/appdata/openclaw/workspace</HostDir>
+      <ContainerDir>/home/node/clawd</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Environment>
+    <Variable>
+      <Value>change-me-please</Value>
+      <Name>OPENCLAW_GATEWAY_TOKEN</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value></Value>
+      <Name>ANTHROPIC_API_KEY</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value></Value>
+      <Name>OPENAI_API_KEY</Name>
+      <Mode/>
+    </Variable>
+    <Variable>
+      <Value>America/Chicago</Value>
+      <Name>TZ</Name>
+      <Mode/>
+    </Variable>
+  </Environment>
+  <Labels/>
+  <Config Name="Config Directory" Target="/home/node/.openclaw" Default="/mnt/user/appdata/openclaw/config" Mode="rw" Description="OpenClaw config and state. Must be owned by UID 1000: chown -R 1000:1000 /mnt/user/appdata/openclaw" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/openclaw/config</Config>
+  <Config Name="Workspace Directory" Target="/home/node/clawd" Default="/mnt/user/appdata/openclaw/workspace" Mode="rw" Description="Agent workspace (SOUL.md, MEMORY.md, skills). Must be owned by UID 1000." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/openclaw/workspace</Config>
+  <Config Name="Projects Directory" Target="/projects" Default="" Mode="rw" Description="Optional: Mount projects folder for coding/automation tasks. Leave blank to skip." Type="Path" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Gateway Token" Target="OPENCLAW_GATEWAY_TOKEN" Default="change-me-please" Mode="" Description="Password for Web UI access. Access UI at: http://IP:18789?token=YOUR_TOKEN" Type="Variable" Display="always" Required="true" Mask="true">change-me-please</Config>
+  <Config Name="Anthropic API Key" Target="ANTHROPIC_API_KEY" Default="" Mode="" Description="Your Anthropic API key for Claude models (get one at console.anthropic.com)" Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="OpenAI API Key" Target="OPENAI_API_KEY" Default="" Mode="" Description="Optional: OpenAI API key for GPT models" Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Timezone" Target="TZ" Default="America/Chicago" Mode="" Description="Your timezone (e.g., America/New_York, Europe/London)" Type="Variable" Display="advanced" Required="false" Mask="false">America/Chicago</Config>
+</Container>
