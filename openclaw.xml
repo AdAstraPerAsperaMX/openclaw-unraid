@@ -10,13 +10,16 @@
   <Project>https://github.com/openclaw/openclaw</Project>
   <Overview>OpenClaw (formerly ClawdBot/MoltBot) is a powerful AI assistant gateway that connects Claude and other LLMs to messaging platforms like Discord, Telegram, WhatsApp, and more. Features include file access, shell commands, web browsing, cron jobs, and a web-based Control UI.&#xD;&#xD;IMPORTANT: To access the Control UI, add your token to the URL: http://YOUR-IP:18789/?token=YOUR-GATEWAY-TOKEN</Overview>
   <Category>Productivity: Tools: AI</Category>
-  <WebUI>http://[IP]:[PORT:18789]</WebUI>
+  <WebUI>http://[IP]:[PORT:18789]/</WebUI>
   <Icon>https://raw.githubusercontent.com/jdhill777/openclaw-unraid/master/openclaw-icon.png</Icon>
   <ExtraParams>--user root --hostname OpenClaw</ExtraParams>
   <PostArgs>sh -c "mkdir -p /root/.openclaw; echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json; node dist/index.js gateway --bind lan"</PostArgs>
   <DonateText>Support the template maintainer</DonateText>
   <DonateLink>https://buymeacoffee.com/jdhill777</DonateLink>
   <Description>OpenClaw (formerly ClawdBot/MoltBot) is a powerful AI assistant gateway that connects Claude and other LLMs to messaging platforms like Discord, Telegram, WhatsApp, and more. Features include file access, shell commands, web browsing, cron jobs, and a web-based Control UI. To access the Control UI, add your token to the URL: http://YOUR-IP:18789/?token=YOUR-GATEWAY-TOKEN</Description>
+
+  <!-- Port -->
+  <Config Name="Control UI Port" Target="18789" Default="18789" Mode="tcp" Description="Port for Control UI and Gateway API" Type="Port" Display="always" Required="true" Mask="false">18789</Config>
 
   <!-- Volume Mappings -->
   <Config Name="Config Path" Target="/root/.openclaw" Default="/mnt/user/appdata/openclaw/config" Mode="rw" Description="Path to store OpenClaw configuration files" Type="Path" Display="always" Required="true" Mask="false"/>
