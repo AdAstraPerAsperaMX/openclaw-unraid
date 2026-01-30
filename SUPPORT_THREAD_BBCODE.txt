@@ -1,0 +1,61 @@
+[b]OpenClaw[/b] is a powerful, self-hosted AI personal assistant that connects to your favorite messaging platforms. Run your own Claude, GPT, or other LLM-powered assistant directly on your Unraid server.
+
+[img]https://raw.githubusercontent.com/jdhill777/openclaw-unraid/master/screenshot.png[/img]
+
+[b][size=5]Features[/size][/b]
+
+[list]
+[*][b]Multi-Channel Messaging[/b] — WhatsApp, Telegram, Discord, Slack, Signal, iMessage, Google Chat, Microsoft Teams, and more
+[*][b]File Management[/b] — Read, write, and organize files on your server
+[*][b]Shell Commands[/b] — Execute scripts, manage Docker, automate tasks
+[*][b]Browser Control[/b] — Research, fetch data, interact with web pages
+[*][b]Cron Jobs[/b] — Schedule tasks and automated workflows
+[*][b]Skills System[/b] — Extend with bundled or custom plugins
+[*][b]Voice Support[/b] — Talk mode with ElevenLabs TTS
+[*][b]Mobile Apps[/b] — iOS and Android companion nodes
+[*][b]100% Local[/b] — Your data stays on your server
+[/list]
+
+[b][size=5]Requirements[/size][/b]
+
+[list]
+[*]API key from [url=https://console.anthropic.com]Anthropic[/url] (recommended), [url=https://openrouter.ai]OpenRouter[/url], [url=https://platform.openai.com]OpenAI[/url], or other supported provider
+[/list]
+
+[b][size=5]Installation[/size][/b]
+
+[list=1]
+[*]Install from Community Applications
+[*]Fill in [b]Gateway Token[/b] (generate with: [code]openssl rand -hex 24[/code])
+[*]Add your LLM API key (Anthropic recommended)
+[*]Click Apply
+[*]Access the Control UI at: [code]http://YOUR-IP:18789/?token=YOUR_TOKEN[/code]
+[/list]
+
+[b]IMPORTANT:[/b] You must append [code]?token=YOUR_TOKEN[/code] to the URL.
+
+[b][size=5]Configuration[/size][/b]
+
+After installation, configure messaging channels via the Control UI or edit:
+[code]/mnt/user/appdata/openclaw/config/openclaw.json[/code]
+
+[b][size=5]Resources[/size][/b]
+
+[list]
+[*][b]Documentation:[/b] [url]https://docs.openclaw.ai[/url]
+[*][b]GitHub:[/b] [url]https://github.com/openclaw/openclaw[/url]
+[*][b]Template Repo:[/b] [url]https://github.com/jdhill777/openclaw-unraid[/url]
+[*][b]Discord:[/b] [url]https://discord.gg/clawd[/url]
+[/list]
+
+[b][size=5]Troubleshooting[/size][/b]
+
+[b]"control ui requires HTTPS or localhost"[/b]
+Make sure you're adding [code]?token=YOUR_TOKEN[/code] to the URL
+
+[b]Container won't start[/b]
+Check logs: [code]docker logs OpenClaw[/code]
+
+[hr]
+
+Questions? Post below or join the [url=https://discord.gg/clawd]OpenClaw Discord[/url]!
