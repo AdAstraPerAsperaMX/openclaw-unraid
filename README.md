@@ -4,30 +4,51 @@
 [![OpenClaw](https://img.shields.io/badge/OpenClaw-v2026.1.29-blue)](https://github.com/openclaw/openclaw)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Community Applications template for [OpenClaw](https://github.com/openclaw/openclaw) — an open-source AI-powered personal assistant that runs locally on your Unraid server.
+Community Applications template for [OpenClaw](https://github.com/openclaw/openclaw) — a powerful, self-hosted AI assistant that runs locally on your Unraid server.
 
-## 🤖 What is OpenClaw?
+![OpenClaw Dashboard](screenshot.png)
 
-OpenClaw is a self-hosted AI assistant that connects to your favorite messaging platforms and can:
+## 🦞 What is OpenClaw?
 
-- 💬 **Chat via Discord, Telegram, Slack, WhatsApp, Signal, or iMessage**
-- 📁 **Manage files** — read, write, organize your data
-- ⚡ **Execute commands** — run scripts, manage Docker, automate tasks
-- 🌐 **Browse the web** — research, fetch data, summarize pages
-- ⏰ **Automate with cron** — scheduled tasks and reminders
-- 🧠 **Remember context** — persistent memory across conversations
-- 🔧 **Extend with skills** — add new capabilities via plugins
+OpenClaw is a personal AI assistant you run on your own devices. It answers you on the channels you already use and keeps your data completely local.
 
-**Your data stays on your server.** OpenClaw runs entirely locally — no cloud required.
+### Multi-Channel Messaging
+Connect to all your favorite platforms from one assistant:
+- 💬 **WhatsApp** — via WhatsApp Web/Baileys
+- ✈️ **Telegram** — Bot API with DMs + groups
+- 🎮 **Discord** — Full bot integration with guilds
+- 💼 **Slack** — Workspace integration via Bolt
+- 📧 **Google Chat** — Workspace chat support
+- 📱 **Signal** — Secure messaging
+- 🍎 **iMessage** — macOS integration
+- 🔷 **Microsoft Teams** — Enterprise chat
+- 🌐 **Matrix**, **Mattermost**, **BlueBubbles**, and more via plugins
+
+### Powerful Features
+- 🧠 **Multi-Agent Routing** — Route different channels/users to isolated agents with separate workspaces
+- 📁 **File Management** — Read, write, and organize files on your server
+- ⚡ **Shell Commands** — Execute scripts, manage Docker, automate anything
+- 🌐 **Browser Control** — Research, fetch data, interact with web pages
+- ⏰ **Cron Jobs** — Schedule tasks, reminders, and automated workflows
+- 🧩 **Skills System** — Extend capabilities with bundled or custom skills
+- 🎤 **Voice Wake + Talk Mode** — Always-on speech with ElevenLabs TTS
+- 📺 **Live Canvas** — Agent-driven visual workspace
+- 📱 **Mobile Nodes** — iOS and Android companion apps
+- 🖥️ **macOS Menu Bar App** — Quick access companion
+
+### Your Data, Your Server
+**100% local.** No cloud required. Your conversations, files, and data stay on your Unraid server.
 
 ## 📋 Requirements
 
 - Unraid 6.x or 7.x
 - Docker support enabled
 - API key from one of:
-  - [Anthropic](https://console.anthropic.com) (Claude) — recommended
-  - [OpenRouter](https://openrouter.ai) (access to 100+ models)
+  - [Anthropic](https://console.anthropic.com) (Claude) — **recommended**
+  - [OpenRouter](https://openrouter.ai) (100+ models)
   - [OpenAI](https://platform.openai.com) (GPT models)
+  - [Google AI Studio](https://aistudio.google.com) (Gemini)
+  - [Groq](https://console.groq.com) (Fast Llama/Mixtral)
 
 ## 🚀 Quick Start
 
@@ -36,14 +57,11 @@ OpenClaw is a self-hosted AI assistant that connects to your favorite messaging 
 1. Search for **OpenClaw** in Community Applications
 2. Click **Install**
 3. Fill in the form:
-   - **Gateway Token**: Generate with `openssl rand -hex 24` or make up a secure password
-   - **Anthropic API Key** (or other LLM key): Your API key
+   - **Gateway Token**: Generate with `openssl rand -hex 24` or create a secure password
+   - **LLM API Key**: Your Anthropic, OpenRouter, or other provider key
 4. Click **Apply**
 
-That's it! The template automatically:
-- Creates the config directory
-- Sets up the config file with correct settings
-- Configures LAN access
+That's it! The template automatically configures everything.
 
 ### Step 2: Access the Control UI
 
@@ -55,7 +73,7 @@ http://YOUR-UNRAID-IP:18789/?token=YOUR_GATEWAY_TOKEN
 
 **Important:** You must append `?token=YOUR_TOKEN` to the URL for authentication.
 
-Example: `http://192.168.1.41:18789/?token=024c2bdb4da040ac3d3bc632cfe454fdd95d86e978345504`
+Example: `http://192.168.1.41:18789/?token=mySecretToken123`
 
 ## ⚙️ Configuration
 
@@ -64,9 +82,14 @@ Example: `http://192.168.1.41:18789/?token=024c2bdb4da040ac3d3bc632cfe454fdd95d8
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENCLAW_GATEWAY_TOKEN` | ✅ Yes | Token for Control UI authentication |
-| `ANTHROPIC_API_KEY` | ⚡ Recommended | API key for Claude models |
-| `OPENROUTER_API_KEY` | ❌ Optional | API key for OpenRouter (100+ models) |
-| `OPENAI_API_KEY` | ❌ Optional | API key for GPT models |
+| `ANTHROPIC_API_KEY` | ⚡ Recommended | Claude models (best experience) |
+| `OPENROUTER_API_KEY` | ❌ Optional | Access to 100+ models |
+| `OPENAI_API_KEY` | ❌ Optional | GPT models |
+| `GEMINI_API_KEY` | ❌ Optional | Google Gemini models |
+| `GROQ_API_KEY` | ❌ Optional | Fast Llama/Mixtral inference |
+| `DISCORD_BOT_TOKEN` | ❌ Optional | Discord integration |
+| `TELEGRAM_BOT_TOKEN` | ❌ Optional | Telegram integration |
+| `BRAVE_API_KEY` | ❌ Optional | Web search (2000 free queries/month) |
 | `TZ` | ❌ Optional | Timezone (default: `America/Chicago`) |
 
 *At least one LLM API key is required.*
@@ -76,17 +99,18 @@ Example: `http://192.168.1.41:18789/?token=024c2bdb4da040ac3d3bc632cfe454fdd95d8
 | Container Path | Host Path | Description |
 |----------------|-----------|-------------|
 | `/root/.openclaw` | `/mnt/user/appdata/openclaw/config` | Config and session data |
-| `/home/node/clawd` | `/mnt/user/appdata/openclaw/workspace` | Agent workspace (files, memory, projects) |
+| `/home/node/clawd` | `/mnt/user/appdata/openclaw/workspace` | Agent workspace |
+| `/projects` | `/mnt/user/appdata/openclaw/projects` | Optional coding projects folder |
 
-### Adding Channels (Discord, Telegram, etc.)
+### Connecting Messaging Channels
 
-After installation, you can configure messaging channels via the Control UI, or edit the config file directly at:
+After installation, configure channels via the Control UI **Config** page, or edit directly:
 
 ```
 /mnt/user/appdata/openclaw/config/openclaw.json
 ```
 
-Example adding Discord:
+Example adding Discord + Telegram:
 ```json
 {
   "gateway": { ... },
@@ -94,21 +118,24 @@ Example adding Discord:
     "discord": {
       "enabled": true,
       "token": "YOUR_DISCORD_BOT_TOKEN"
+    },
+    "telegram": {
+      "enabled": true,
+      "botToken": "YOUR_TELEGRAM_BOT_TOKEN"
     }
   }
 }
 ```
 
-See [OpenClaw Docs](https://docs.openclaw.ai/channels) for full channel setup guides.
+📚 Full channel setup guides: [OpenClaw Docs - Channels](https://docs.openclaw.ai/channels)
 
 ## 🔄 Updating
 
-Via Unraid Docker UI:
-1. Go to Docker tab
-2. Click the OpenClaw icon → Check for Updates
-3. Apply update
+**Via Unraid Docker UI:**
+1. Docker tab → Click OpenClaw icon → Check for Updates
+2. Apply update
 
-Via command line:
+**Via command line:**
 ```bash
 docker pull ghcr.io/openclaw/openclaw:latest
 docker restart OpenClaw
@@ -118,44 +145,33 @@ docker restart OpenClaw
 
 ### "disconnected (1008): control ui requires HTTPS or localhost"
 
-Make sure you're accessing the URL with your token:
+Ensure you're accessing with your token:
 ```
 http://YOUR-IP:18789/?token=YOUR_TOKEN
 ```
 
-If the error persists, check that the config file exists:
+If the error persists, verify the config file exists and contains `allowInsecureAuth`:
 ```bash
 cat /mnt/user/appdata/openclaw/config/openclaw.json
 ```
 
-It should contain `"allowInsecureAuth": true`.
+### Container won't start / "Missing config" error
 
-### Web UI shows blank page or won't load
-
-Check the container logs:
-```bash
-docker logs OpenClaw
-```
-
-### "Missing config" error in logs
-
-The config file wasn't created. Manually create it:
+Manually create the config:
 ```bash
 mkdir -p /mnt/user/appdata/openclaw/config
 echo '{"gateway":{"mode":"local","bind":"lan","controlUi":{"allowInsecureAuth":true},"auth":{"mode":"token"}}}' > /mnt/user/appdata/openclaw/config/openclaw.json
 docker restart OpenClaw
 ```
 
-### Container keeps restarting
-
-Check logs for specific errors:
+### Check logs for errors
 ```bash
 docker logs OpenClaw 2>&1 | tail -50
 ```
 
 ## 🖥️ Manual Installation
 
-If you prefer not to use the CA template:
+If not using the CA template:
 
 ```bash
 # Create directories
@@ -168,12 +184,8 @@ cat > /mnt/user/appdata/openclaw/config/openclaw.json << 'EOF'
   "gateway": {
     "mode": "local",
     "bind": "lan",
-    "controlUi": {
-      "allowInsecureAuth": true
-    },
-    "auth": {
-      "mode": "token"
-    }
+    "controlUi": { "allowInsecureAuth": true },
+    "auth": { "mode": "token" }
   }
 }
 EOF
@@ -195,22 +207,26 @@ docker run -d \
 
 ## 📚 Resources
 
-- **OpenClaw Documentation:** https://docs.openclaw.ai
-- **OpenClaw GitHub:** https://github.com/openclaw/openclaw
-- **OpenClaw Discord:** https://discord.com/invite/clawd
+- **OpenClaw Website:** https://openclaw.ai
+- **Documentation:** https://docs.openclaw.ai
+- **GitHub:** https://github.com/openclaw/openclaw
+- **Discord Community:** https://discord.gg/clawd
+- **Getting Started Guide:** https://docs.openclaw.ai/start/getting-started
 
 ## 📝 License
 
 This template is released under the [MIT License](LICENSE).
 
-OpenClaw itself is open-source — see the [OpenClaw repository](https://github.com/openclaw/openclaw) for its license.
+OpenClaw is open-source under the MIT License — see the [OpenClaw repository](https://github.com/openclaw/openclaw).
 
 ## 🙏 Credits
 
-- **OpenClaw** — The team behind the AI assistant
+- **OpenClaw Team** — Peter Steinberger ([@steipete](https://twitter.com/steipete)) and contributors
 - **Template Author** — [@jdhill777](https://github.com/jdhill777)
 - **Tested on** — Unraid 7.x
 
 ---
 
-**Questions?** Open an issue or join the [OpenClaw Discord](https://discord.com/invite/clawd).
+🦞 *"EXFOLIATE! EXFOLIATE!" — A space lobster, probably*
+
+**Questions?** Open an issue or join the [OpenClaw Discord](https://discord.gg/clawd).
