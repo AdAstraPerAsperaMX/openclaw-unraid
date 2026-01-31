@@ -51,6 +51,18 @@ Connect to all your favorite platforms from one assistant:
   - [Google AI Studio](https://aistudio.google.com) (Gemini)
   - [Groq](https://console.groq.com) (Fast Llama/Mixtral)
 
+### Getting an Anthropic API Key (Recommended)
+
+1. Go to [console.anthropic.com](https://console.anthropic.com)
+2. Sign up or log in
+3. Add a payment method (Settings → Billing)
+4. Go to **API Keys** and create a new key
+5. Copy the key (starts with `sk-ant-`)
+
+**Pricing:** Pay-as-you-go, starting at $5 credit. Most personal usage costs $5-20/month depending on how much you chat.
+
+> **Note:** This is separate from a Claude Pro subscription ($20/mo). Claude Pro is for the claude.ai web app — API access requires credits from the console. If you have Claude Max, you may be able to use subscription-based auth instead (see [OpenClaw docs](https://docs.openclaw.ai) for details).
+
 ## 🚀 Quick Start
 
 ### Step 1: Install from Community Apps
