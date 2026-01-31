@@ -61,7 +61,46 @@ Connect to all your favorite platforms from one assistant:
 
 **Pricing:** Pay-as-you-go, starting at $5 credit. Most personal usage costs $5-20/month depending on how much you chat.
 
-> **Note:** This is separate from a Claude Pro subscription ($20/mo). Claude Pro is for the claude.ai web app — API access requires credits from the console. If you have Claude Max, you may be able to use subscription-based auth instead (see [OpenClaw docs](https://docs.openclaw.ai) for details).
+> **Note:** This is separate from a Claude Pro subscription ($20/mo). Claude Pro is for the claude.ai web app — API access requires credits from the console. If you have Claude Pro or Max, see below for subscription-based auth.
+
+### Using Claude Pro/Max Subscription (Alternative)
+
+If you have a Claude Pro ($20/mo) or Claude Max subscription, you can use that instead of buying API credits. This requires authenticating via Claude Code CLI on a device with a browser, then copying the credentials to Unraid.
+
+**On your Mac/PC (not Unraid):**
+
+1. Install Claude Code CLI:
+   ```bash
+   npm install -g @anthropic-ai/claude-code
+   ```
+
+2. Log in with your Anthropic account:
+   ```bash
+   claude login
+   ```
+
+3. A browser window opens — sign in with the account that has your Pro/Max subscription
+
+4. After successful auth, find your credentials:
+   ```bash
+   cat ~/.claude/.credentials.json
+   ```
+
+5. Copy the credentials file to your Unraid server:
+   ```bash
+   scp ~/.claude/.credentials.json root@YOUR-UNRAID-IP:/mnt/user/appdata/openclaw/config/.credentials.json
+   ```
+
+**On Unraid:**
+
+6. Make sure the credentials are in the config folder:
+   ```bash
+   ls -la /mnt/user/appdata/openclaw/config/.credentials.json
+   ```
+
+7. Restart the OpenClaw container — it should now use your subscription instead of API credits
+
+> **Tip:** With subscription auth, you don't need to set `ANTHROPIC_API_KEY`. If both are present, the API key takes precedence.
 
 ## 🚀 Quick Start
 
