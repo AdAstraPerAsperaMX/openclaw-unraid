@@ -287,6 +287,7 @@ docker run -d \
 
 ## 📚 Resources
 
+- **Unraid Support Thread:** https://forums.unraid.net/topic/196865-support-openclaw-ai-personal-assistant/
 - **OpenClaw Website:** https://openclaw.ai
 - **Documentation:** https://docs.openclaw.ai
 - **GitHub:** https://github.com/openclaw/openclaw
