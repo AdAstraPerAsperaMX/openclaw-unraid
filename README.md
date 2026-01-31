@@ -135,30 +135,108 @@ Example: `http://192.168.1.41:18789/?token=mySecretToken123`
 
 ## ⚙️ Configuration
 
-### Environment Variables
+### Template Settings Reference
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `OPENCLAW_GATEWAY_TOKEN` | ✅ Yes | Token for Control UI authentication |
-| `ANTHROPIC_API_KEY` | ⚡ Recommended | Claude models (best experience) |
-| `OPENROUTER_API_KEY` | ❌ Optional | Access to 100+ models |
-| `OPENAI_API_KEY` | ❌ Optional | GPT models |
-| `GEMINI_API_KEY` | ❌ Optional | Google Gemini models |
-| `GROQ_API_KEY` | ❌ Optional | Fast Llama/Mixtral inference |
-| `DISCORD_BOT_TOKEN` | ❌ Optional | Discord integration |
-| `TELEGRAM_BOT_TOKEN` | ❌ Optional | Telegram integration |
-| `BRAVE_API_KEY` | ❌ Optional | Web search (2000 free queries/month) |
-| `TZ` | ❌ Optional | Timezone (default: `America/Chicago`) |
+This table documents all settings available in the Unraid template:
 
-*At least one LLM API key is required.*
+| Setting | Type | Required | Default | Description |
+|---------|------|----------|---------|-------------|
+| **Ports** |
+| Control UI Port | Port | ✅ Yes | `18789` | Web UI and Gateway API port. Access at `http://IP:18789/?token=TOKEN` |
+| **Paths** |
+| Config Path | Path | ✅ Yes | `/mnt/user/appdata/openclaw/config` | OpenClaw configuration, sessions, and credentials |
+| Workspace Path | Path | ✅ Yes | `/mnt/user/appdata/openclaw/workspace` | Agent workspace for files, memory, and projects |
+| Projects Path | Path | ❌ Optional | `/mnt/user/appdata/openclaw/projects` | Additional path for coding projects (advanced) |
+| **Authentication** |
+| Gateway Token | Variable | ✅ Yes | — | Secret token for API/UI access. Generate: `openssl rand -hex 24` |
+| **LLM Providers** (at least one required) |
+| Anthropic API Key | Variable | ⚡ Recommended | — | Claude models. Get from [console.anthropic.com](https://console.anthropic.com) |
+| OpenRouter API Key | Variable | ❌ Optional | — | 100+ models via single API. Get from [openrouter.ai](https://openrouter.ai) |
+| OpenAI API Key | Variable | ❌ Optional | — | GPT models. Get from [platform.openai.com](https://platform.openai.com) |
+| Gemini API Key | Variable | ❌ Optional | — | Google Gemini. Get from [aistudio.google.com](https://aistudio.google.com) |
+| Groq API Key | Variable | ❌ Optional | — | Fast Llama/Mixtral. Get from [console.groq.com](https://console.groq.com) |
+| **Messaging Channels** (configure after install) |
+| Discord Bot Token | Variable | ❌ Optional | — | Discord bot integration. Can also configure via Control UI |
+| Telegram Bot Token | Variable | ❌ Optional | — | Telegram bot from [@BotFather](https://t.me/BotFather). Can also configure via Control UI |
+| **Advanced** |
+| Gateway Port | Variable | ❌ Optional | `18789` | Override if port 18789 is in use |
+| Web Search API Key | Variable | ❌ Optional | — | Brave Search API for web search (2000 free/month at [brave.com/search/api](https://brave.com/search/api)) |
 
 ### Volume Mounts
 
 | Container Path | Host Path | Description |
 |----------------|-----------|-------------|
-| `/root/.openclaw` | `/mnt/user/appdata/openclaw/config` | Config and session data |
-| `/home/node/clawd` | `/mnt/user/appdata/openclaw/workspace` | Agent workspace |
+| `/root/.openclaw` | `/mnt/user/appdata/openclaw/config` | Config file, sessions, credentials, WhatsApp auth |
+| `/home/node/clawd` | `/mnt/user/appdata/openclaw/workspace` | Agent workspace (files, memory, AGENTS.md, etc.) |
 | `/projects` | `/mnt/user/appdata/openclaw/projects` | Optional coding projects folder |
+
+### Config File Reference (`openclaw.json`)
+
+The main configuration file is stored at:
+```
+/mnt/user/appdata/openclaw/config/openclaw.json
+```
+
+Key configuration sections (see [full docs](https://docs.openclaw.ai/gateway/configuration)):
+
+| Section | Purpose | Example |
+|---------|---------|---------|
+| `gateway` | Core gateway settings | `{ "bind": "lan", "port": 18789 }` |
+| `gateway.auth` | Authentication mode | `{ "mode": "token" }` |
+| `gateway.controlUi` | Web UI settings | `{ "allowInsecureAuth": true }` |
+| `channels` | Messaging platform configs | Discord, Telegram, WhatsApp, Slack, etc. |
+| `channels.discord` | Discord bot settings | `{ "enabled": true, "token": "..." }` |
+| `channels.telegram` | Telegram bot settings | `{ "enabled": true, "botToken": "..." }` |
+| `channels.whatsapp` | WhatsApp Web settings | `{ "allowFrom": ["+1234567890"] }` |
+| `agents` | Agent configuration | Model selection, workspace, sandbox |
+| `agents.defaults.model` | Default LLM model | `{ "primary": "anthropic/claude-sonnet-4-5" }` |
+| `agents.defaults.workspace` | Agent workspace path | `"~/.openclaw/workspace"` |
+| `tools` | Tool permissions | Web search, browser, elevated access |
+| `cron` | Scheduled jobs | Reminders, automations, periodic tasks |
+| `messages` | Message handling | Prefixes, reactions, queue behavior |
+
+**Minimal config (auto-created on first run):**
+```json
+{
+  "gateway": {
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": { "allowInsecureAuth": true },
+    "auth": { "mode": "token" }
+  }
+}
+```
+
+**Example with Discord + custom model:**
+```json
+{
+  "gateway": {
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": { "allowInsecureAuth": true },
+    "auth": { "mode": "token" }
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "token": "YOUR_DISCORD_BOT_TOKEN",
+      "dm": { "enabled": true, "policy": "allowlist", "allowFrom": ["YOUR_DISCORD_USER_ID"] },
+      "guilds": {
+        "YOUR_GUILD_ID": {
+          "channels": { "general": { "allow": true } }
+        }
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": { "primary": "anthropic/claude-sonnet-4-5" }
+    }
+  }
+}
+```
+
+📚 **Full configuration reference:** [docs.openclaw.ai/gateway/configuration](https://docs.openclaw.ai/gateway/configuration)
 
 ### Connecting Messaging Channels
 
