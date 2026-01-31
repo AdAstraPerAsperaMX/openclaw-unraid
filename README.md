@@ -87,6 +87,27 @@ That's it! OpenClaw will use your subscription instead of API credits.
 
 > **Tip:** The token expires periodically. If you get auth errors, run `claude setup-token` again to get a fresh token.
 
+### Using Non-Anthropic Providers (OpenAI, Gemini, Groq, OpenRouter)
+
+OpenClaw defaults to Anthropic's Claude model. **If you're using a different provider, you must change the default model after installation:**
+
+1. Install OpenClaw with your API key (e.g., `GEMINI_API_KEY`)
+2. Open the Control UI
+3. Go to **Config** tab
+4. Find `agents.defaults.model.primary` and change it to match your provider:
+
+| Provider | Model Example |
+|----------|---------------|
+| Anthropic | `anthropic/claude-sonnet-4-5` (default) |
+| Google Gemini | `google/gemini-2.0-flash` |
+| OpenAI | `openai/gpt-4o` |
+| Groq | `groq/llama-3.1-70b-versatile` |
+| OpenRouter | `openrouter/anthropic/claude-3-sonnet` |
+
+5. Save the config and restart the container
+
+> **Why is this needed?** OpenClaw doesn't auto-detect which provider you're using from the API key. The default model is Anthropic — if you set a Gemini key but leave the default model, you'll get "No API key found for anthropic" errors.
+
 ## 🚀 Quick Start
 
 ### Step 1: Install from Community Apps
