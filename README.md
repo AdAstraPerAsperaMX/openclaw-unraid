@@ -365,7 +365,7 @@ docker run -d \
   -e OPENCLAW_GATEWAY_TOKEN=YOUR_TOKEN \
   -e ANTHROPIC_API_KEY=sk-ant-YOUR_KEY \
   ghcr.io/openclaw/openclaw:latest \
-  sh -c "mkdir -p /root/.openclaw /home/linuxbrew; [ -f /root/.openclaw/openclaw.json ] || echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json; [ -x /home/linuxbrew/.linuxbrew/bin/brew ] || { echo Installing Homebrew... && NONINTERACTIVE=1 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash; }; eval \$(/home/linuxbrew/.linuxbrew/bin/brew shellenv) 2>/dev/null || true; exec node dist/index.js gateway --bind lan"
+  sh -c "mkdir -p /root/.openclaw /home/linuxbrew; [ -f /root/.openclaw/openclaw.json ] || echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json; [ -x /home/linuxbrew/.linuxbrew/bin/brew ] || { echo Installing Homebrew... && NONINTERACTIVE=1 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash; }; export PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:\$PATH; exec node dist/index.js gateway --bind lan"
 ```
 
 > **Note:** First start will take ~60 seconds to install Homebrew. Subsequent starts are fast since Homebrew persists in the volume.
