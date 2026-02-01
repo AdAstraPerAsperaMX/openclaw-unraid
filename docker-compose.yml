@@ -3,65 +3,65 @@ version: "3.8"
 services:
   openclaw:
     image: ghcr.io/openclaw/openclaw:latest
-    container_name: openclaw-gateway
-    hostname: ${HOSTNAME:-openclaw}
+    container_name: openclaw
+    hostname: OpenClaw
     restart: unless-stopped
-    network_mode: host
-    # Runs as 'node' user (UID 1000) - do NOT add user: root
+    user: root
+    
+    ports:
+      - "18789:18789"
     
     volumes:
-      # Config and state (openclaw.json, sessions, media)
-      # IMPORTANT: Must be owned by UID 1000
-      - /mnt/user/appdata/openclaw/config:/home/node/.openclaw:rw
-      # Agent workspace (SOUL.md, MEMORY.md, skills)
-      - /mnt/user/appdata/openclaw/workspace:/home/node/clawd:rw
-      # Optional: Projects directory
-      # - /mnt/user/projects:/projects:rw
+      # Config and state (openclaw.json, sessions, credentials)
+      - ./config:/root/.openclaw:rw
+      # Agent workspace (SOUL.md, MEMORY.md, projects)
+      - ./workspace:/home/node/clawd:rw
+      # Homebrew packages (persists brew/go/npm installs)
+      - ./homebrew:/home/linuxbrew/.linuxbrew:rw
     
     environment:
-      - TZ=America/Chicago
-      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-change-me}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TZ=${TZ:-America/Chicago}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:?Gateway token required}
+      # LLM API Keys - set at least one
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      # Optional
+      - BRAVE_API_KEY=${BRAVE_API_KEY:-}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      # System PATH including Homebrew
+      - PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/root/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     
-    command: ["node", "dist/index.js", "gateway"]
+    command: >
+      sh -c "mkdir -p /root/.openclaw /home/linuxbrew;
+      [ -f /root/.openclaw/openclaw.json ] || echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json;
+      [ -x /home/linuxbrew/.linuxbrew/bin/brew ] || { echo Installing Homebrew... && NONINTERACTIVE=1 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash; };
+      exec node dist/index.js gateway --bind lan"
     
     logging:
       driver: json-file
       options:
         max-size: "50m"
-        max-file: "1"
+        max-file: "3"
 
 # ==============================================================================
-# FIRST TIME SETUP
+# QUICK START
 # ==============================================================================
 #
-# 1. Create directories:
-#    mkdir -p /mnt/user/appdata/openclaw/{config,workspace}
-#
-# 2. Create config file at /mnt/user/appdata/openclaw/config/openclaw.json:
-#    {
-#      "gateway": {
-#        "mode": "local",
-#        "bind": "lan",
-#        "auth": { "token": "${OPENCLAW_GATEWAY_TOKEN}" }
-#      },
-#      "agents": {
-#        "defaults": { "workspace": "/home/node/clawd" }
-#      }
-#    }
-#
-# 3. Fix permissions (container runs as UID 1000):
-#    chown -R 1000:1000 /mnt/user/appdata/openclaw
-#
-# 4. Create .env file with your keys:
+# 1. Create .env file:
 #    OPENCLAW_GATEWAY_TOKEN=your-secret-token
 #    ANTHROPIC_API_KEY=sk-ant-...
 #
-# 5. Start:
+# 2. Start:
 #    docker compose up -d
 #
-# 6. Access Web UI:
-#    http://YOUR-IP:18789?token=YOUR_TOKEN
+# 3. Access Control UI:
+#    http://localhost:18789/?token=YOUR_TOKEN
+#
+# NOTE: First start takes ~60 seconds to install Homebrew for skills support.
+#       Subsequent starts are fast since Homebrew persists in the volume.
 #
 # ==============================================================================
