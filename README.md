@@ -163,7 +163,7 @@ This table documents all settings available in the Unraid template:
 | Config Path | Path | ✅ Yes | `/mnt/user/appdata/openclaw/config` | OpenClaw configuration, sessions, and credentials |
 | Workspace Path | Path | ✅ Yes | `/mnt/user/appdata/openclaw/workspace` | Agent workspace for files, memory, and projects |
 | Projects Path | Path | ❌ Optional | `/mnt/user/appdata/openclaw/projects` | Additional path for coding projects (advanced) |
-| Homebrew Path | Path | ❌ Optional | `/mnt/user/appdata/openclaw/homebrew` | Persistent Homebrew packages. Enables skills requiring brew/go/npm. Auto-installs on first start (~60 sec). |
+| Homebrew Path | Path | ❌ Optional | `/mnt/user/appdata/openclaw/homebrew` | Persistent Homebrew packages. If you install Homebrew manually via console, this mount ensures it persists across restarts. |
 | **Authentication** |
 | Gateway Token | Variable | ✅ Yes | — | Secret token for API/UI access. Generate: `openssl rand -hex 24` |
 | **LLM Providers** (at least one required) |
@@ -172,6 +172,10 @@ This table documents all settings available in the Unraid template:
 | OpenAI API Key | Variable | ❌ Optional | — | GPT models. Get from [platform.openai.com](https://platform.openai.com) |
 | Gemini API Key | Variable | ❌ Optional | — | Google Gemini. Get from [aistudio.google.com](https://aistudio.google.com) |
 | Groq API Key | Variable | ❌ Optional | — | Fast Llama/Mixtral. Get from [console.groq.com](https://console.groq.com) |
+| xAI API Key | Variable | ❌ Optional | — | xAI Grok models. Get from [console.x.ai](https://console.x.ai) |
+| Z.AI API Key | Variable | ❌ Optional | — | Z.AI/Zhipu GLM models. Get from [z.ai/model-api](https://z.ai/model-api) |
+| **Subscription Auth** |
+| GitHub Copilot Token | Variable | ❌ Optional | — | (Advanced) GitHub Copilot OAuth token. See [Using Claude Pro/Max](#using-claude-promax-subscription-alternative) section. |
 | **Messaging Channels** (configure after install) |
 | Discord Bot Token | Variable | ❌ Optional | — | Discord bot integration. Can also configure via Control UI |
 | Telegram Bot Token | Variable | ❌ Optional | — | Telegram bot from [@BotFather](https://t.me/BotFather). Can also configure via Control UI |
@@ -194,10 +198,14 @@ This table documents all settings available in the Unraid template:
 OpenClaw includes a [Skills system](https://docs.openclaw.ai/skills) that extends functionality with plugins. Some skills require tools like `go`, `npm`, or other brew-installable packages.
 
 **How it works:**
-- First container start automatically installs Homebrew (~60 seconds)
-- Homebrew and installed packages persist in the `Homebrew Path` volume
-- Subsequent starts skip installation and boot fast
-- The `PATH` environment variable is pre-configured so OpenClaw can find brew-installed tools
+- Homebrew is **optional** — only install if you need skills that require brew/go/npm tools
+- To install, open the container console and run:
+  ```bash
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+- You can ignore the "Next steps" output — the template has already configured the PATH for you
+- Homebrew and installed packages persist in the `Homebrew Path` volume across restarts
+- We recommend reviewing the install script at [brew.sh](https://brew.sh) before running
 
 **Known limitation:** Skills that require Go (like `blogwatcher`, `blucli`) may timeout on first install while Go is being downloaded via Homebrew. This is due to OpenClaw's skill installer timeout. Simply click **Install** again and it will succeed since Go is now cached.
 
@@ -357,7 +365,7 @@ curl -o /boot/config/plugins/dockerMan/templates-user/openclaw.xml \
 
 **Step 5:** Click **Apply** — done!
 
-> **Note:** First start takes ~60 seconds to install Homebrew for skills support. Subsequent starts are fast.
+> **Note:** Homebrew is optional — see the [Homebrew & Skills Support](#homebrew--skills-support) section if you need it for certain skills.
 
 <details>
 <summary><strong>Advanced: Manual Docker Run</strong></summary>
@@ -385,7 +393,7 @@ docker run -d \
   -e ANTHROPIC_API_KEY=sk-ant-YOUR_KEY \
   -e PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/root/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
   ghcr.io/openclaw/openclaw:latest \
-  sh -c "mkdir -p /root/.openclaw /home/linuxbrew; [ -s /root/.openclaw/openclaw.json ] || echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json; [ -x /home/linuxbrew/.linuxbrew/bin/brew ] || { echo Installing Homebrew... && NONINTERACTIVE=1 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash; }; exec node dist/index.js gateway --bind lan"
+  sh -c "mkdir -p /root/.openclaw /home/linuxbrew; [ -s /root/.openclaw/openclaw.json ] || echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json; exec node dist/index.js gateway --bind lan"
 ```
 
 </details>
