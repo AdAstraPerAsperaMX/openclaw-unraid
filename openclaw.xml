@@ -27,11 +27,15 @@
   <Config Name="Workspace Path" Target="/home/node/clawd" Default="/mnt/user/appdata/openclaw/workspace" Mode="rw" Description="Path for agent workspace (files, memory, AGENTS.md, projects)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/openclaw/workspace</Config>
   <Config Name="Projects Path" Target="/projects" Default="/mnt/user/appdata/openclaw/projects" Mode="rw" Description="Optional additional path for coding projects" Type="Path" Display="advanced" Required="false" Mask="false">/mnt/user/appdata/openclaw/projects</Config>
   <Config Name="Homebrew Path" Target="/home/linuxbrew/.linuxbrew" Default="/mnt/user/appdata/openclaw/homebrew" Mode="rw" Description="Persistent storage for Homebrew packages. If you install Homebrew manually via console, this mount ensures it persists across restarts." Type="Path" Display="advanced" Required="false" Mask="false">/mnt/user/appdata/openclaw/homebrew</Config>
+  
+  <!-- Tailscale Persistence Path -->
+  <Config Name="Tailscale State Path" Target="/root/.tailscale_state" Default="/mnt/user/appdata/openclaw/tailscale" Mode="rw" Description="Persistent directory for Tailscale state/identity. Prevents having to re-login on every restart." Type="Path" Display="advanced" Required="true" Mask="false">/mnt/user/appdata/openclaw/tailscale</Config>
 
-  <!-- Tailscale Compatibility Logic (The "Proper" Way) -->
+  <!-- Tailscale Compatibility Logic -->
   <Config Name="Original Entrypoint" Target="ORG_ENTRYPOINT" Default="docker-entrypoint.sh" Mode="" Description="Internal entrypoint for Tailscale compatibility." Type="Variable" Display="advanced" Required="true" Mask="false">docker-entrypoint.sh</Config>
   <Config Name="Original Command" Target="ORG_CMD" Default="node dist/index.js gateway --bind lan" Mode="" Description="Internal command for Tailscale compatibility." Type="Variable" Display="advanced" Required="true" Mask="false">node dist/index.js gateway --bind lan</Config>
   <Config Name="Original PostArgs" Target="ORG_POSTARGS" Default="" Mode="" Description="Setup logic run before the main process starts." Type="Variable" Display="advanced" Required="false" Mask="false">sh -c "mkdir -p /root/.openclaw /home/linuxbrew &amp;&amp; ([ -s /root/.openclaw/openclaw.json ] || echo '{\"gateway\":{\"mode\":\"local\",\"bind\":\"lan\",\"controlUi\":{\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\"}}}' > /root/.openclaw/openclaw.json)"</Config>
+  <Config Name="Tailscale Fallback Dir" Target="CA_TS_FALLBACK_DIR" Default="/root/.tailscale_state" Mode="" Description="Tells the Tailscale hook where to store its state file." Type="Variable" Display="advanced" Required="true" Mask="false">/root/.tailscale_state</Config>
 
   <!-- Required Settings -->
   <Config Name="Gateway Token" Target="OPENCLAW_GATEWAY_TOKEN" Default="" Mode="" Description="Secret token for authentication. Generate with: openssl rand -hex 24 (or use any secret value). Required to access the Control UI." Type="Variable" Display="always" Required="true" Mask="true"/>
